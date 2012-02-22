@@ -1,0 +1,5 @@
+h1. Funções pares e ímpares
+
+Esta Objeto de Aprendizagem (OA), do tipo exercício de múltipla escolha, permite ao aluno exercitar o conceito de simetria par/ímpar de funções de uma variável.
+
+
