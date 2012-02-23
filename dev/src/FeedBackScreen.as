@@ -10,8 +10,6 @@ package
 	 */
 	public class FeedBackScreen extends MovieClip
 	{
-		private var certo:Boolean = true;
-		
 		public function FeedBackScreen() 
 		{
 			this.x = 700 / 2;
@@ -44,14 +42,7 @@ package
 		public function setText(texto:String):void
 		{
 			openScreen();
-			if (certo) certoErrado.gotoAndStop(1);
-			else certoErrado.gotoAndStop(2);
 			this.texto.text = texto;
-		}
-		
-		public function set setCerto(certo:Boolean):void
-		{
-			this.certo = certo;
 		}
 		
 	}

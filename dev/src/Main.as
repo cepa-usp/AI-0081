@@ -179,9 +179,13 @@ package
 		{
 			var rdClicked:RadioButton = RadioButton(e.target);
 			selectedAnswer = rdClicked.label;
+			
 			finaliza.filters = [];
 			finaliza.mouseEnabled = true;
 			finaliza.alpha = 1;
+			
+			certoErrado2.x = rdClicked.x;
+			certoErrado2.y = rdClicked.y;
 		}
 		
 		private function openOrientacoes(e:MouseEvent):void 
@@ -245,6 +249,8 @@ package
 			botoes.resetButton.filters = [GRAYSCALE_FILTER];
 			botoes.resetButton.alpha = 0.5;
 			
+			certoErrado2.visible = false;
+			
 			selectedAnswer = "";
 		}
 		
@@ -275,41 +281,43 @@ package
 			var strFeedBack:String;
 			if (selectedAnswer == PAR) {
 				if (currentAnswer == PAR) {//Acertou
-					feedBackScreen.setCerto = true;
+					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a -f(x).";
 				}else if (currentAnswer == IMPAR) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
 				}else if (currentAnswer == INDEFINIDA) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Atente para a região x > 0, nela não é possível \"replicar\" o gráfico de f(x) sobre o eixo y de modo a obter o mesmo f(x) na região x < 0. Assim, ao colocar um objeto na posição vertical em frente ao espelho, o reflexo irá aparecer na posição horizontal. Ou seja, não existe relação de simetria entre o objeto \"f(x) em x > 0\" e seu reflexo \"f(x) em x < 0\".";
 				}
 			}else if (selectedAnswer == IMPAR) {
 				if (currentAnswer == PAR) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
 				}else if (currentAnswer == IMPAR) {//Acertou
-					feedBackScreen.setCerto = true;
+					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a f(x).";
 				}else if (currentAnswer == INDEFINIDA) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Atente para a região x > 0, nela não é possível \"replicar\" o gráfico de f(x) sobre o eixo y de modo a obter o mesmo f(x) na região x < 0. Assim, ao colocar um objeto na posição vertical em frente ao espelho, o reflexo irá aparecer na posição horizontal. Ou seja, não existe relação de simetria entre o objeto \"f(x) em x > 0\" e seu reflexo \"f(x) em x < 0\".";
 				}
 			}else if (selectedAnswer == "ambas") {
 				strFeedBack = "Nenhuma função pode ser ao mesmo tempo par e ímpar (exceto se f(x) = 0). Ou ela é par, ou ímpar, ou não tem simetria (nem par nem ímpar).";
 			}else if (selectedAnswer == INDEFINIDA) {
 				if (currentAnswer == PAR) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
 				}else if (currentAnswer == IMPAR) {
-					feedBackScreen.setCerto = false;
+					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
 				}else if (currentAnswer == INDEFINIDA) {//Acertou
 					//TO DO: surge um ssinal de "v" na cor verde e a mensagem
-					feedBackScreen.setCerto = true;
+					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Esta função não tem paridade definida.";
 				}
 			}
+			
+			certoErrado2.visible = true;
 			
 			finaliza.filters = [GRAYSCALE_FILTER];
 			finaliza.mouseEnabled = false;
@@ -337,7 +345,7 @@ package
 		private var pointsTuto:Array;
 		private var tutoBaloonPos:Array;
 		private var tutoPos:int;
-		private var tutoSequence:Array = ["Este é o gráfico de uma função aleatória.", 
+		private var tutoSequence:Array = ["Este é o gráfico de uma função aleatória.",
 										  "Escolha a classificação da função mostrada acima.",
 										  "Clique em \"Terminei\" para verificar sua resposta."];
 										  
