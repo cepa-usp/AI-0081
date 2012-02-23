@@ -17,10 +17,10 @@ package
 			this.x = 700 / 2;
 			this.y = 600 / 2;
 			
-			this.gotoAndStop("END");
+			//this.closeButton.addEventListener(MouseEvent.CLICK, closeScreen);
+			//stage.addEventListener(KeyboardEvent.KEY_UP, escCloseScreen);
 			
-			this.addEventListener(MouseEvent.CLICK, closeScreen);
-			stage.addEventListener(KeyboardEvent.KEY_UP, escCloseScreen);
+			this.gotoAndStop("END");
 		}
 		
 		private function escCloseScreen(e:KeyboardEvent):void 
@@ -38,6 +38,7 @@ package
 		public function openScreen():void
 		{
 			this.gotoAndStop("BEGIN");
+			this.closeButton.addEventListener(MouseEvent.CLICK, closeScreen, false, 0, true);
 		}
 		
 		public function setText(texto:String):void
