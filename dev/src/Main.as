@@ -11,6 +11,7 @@ package
 	import flash.events.MouseEvent;
 	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	/**
 	 * ...
 	 * @author Alexandre
@@ -62,6 +63,8 @@ package
 		private function init(e:Event = null):void 
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
+			
+			this.scrollRect = new Rectangle(0, 0, 700, 600);
 			
 			createGraph();
 			createFunctions();
