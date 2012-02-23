@@ -345,13 +345,15 @@ package
 		private var pointsTuto:Array;
 		private var tutoBaloonPos:Array;
 		private var tutoPos:int;
-		private var tutoSequence:Array = ["Este é o gráfico de uma função aleatória.",
-										  "Escolha a classificação da função mostrada acima.",
+		private var tutoPhaseFinal:Boolean;
+		private var tutoSequence:Array = ["Esta é uma função f(x) escolhida aleatoriamente.",
+										  "Qual é a simetria de f(x)? Escolha uma opção.",
 										  "Clique em \"Terminei\" para verificar sua resposta."];
 										  
 		private function iniciaTutorial(e:MouseEvent = null):void 
 		{
 			tutoPos = 0;
+			tutoPhaseFinal = false;
 			if(balao == null){
 				balao = new CaixaTexto(true);
 				addChild(balao);
@@ -366,6 +368,7 @@ package
 								[CaixaTexto.LEFT, CaixaTexto.LAST]];
 			}
 			balao.removeEventListener(Event.CLOSE, closeBalao);
+			feedBackScreen.removeEventListener(Event.CLOSE, iniciaTutorialSegundaFase);
 			
 			balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
 			balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
@@ -375,13 +378,30 @@ package
 		
 		private function closeBalao(e:Event):void 
 		{
-			tutoPos++;
-			if (tutoPos >= tutoSequence.length) {
+			if (tutoPhaseFinal) {
 				balao.removeEventListener(Event.CLOSE, closeBalao);
 				balao.visible = false;
-			}else {
-				balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
-				balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
+				feedBackScreen.removeEventListener(Event.CLOSE, iniciaTutorialSegundaFase);
+			}else{
+				tutoPos++;
+				if (tutoPos >= tutoSequence.length) {
+					balao.removeEventListener(Event.CLOSE, closeBalao);
+					balao.visible = false;
+					feedBackScreen.addEventListener(Event.CLOSE, iniciaTutorialSegundaFase);
+					tutoPhaseFinal = true;
+				}else {
+					balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
+					balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
+				}
+			}
+		}
+		
+		private function iniciaTutorialSegundaFase(e:Event):void 
+		{
+			if(tutoPhaseFinal){
+				balao.setText("Você pode começar um novo exercício clicando aqui.", tutoBaloonPos[2][0], tutoBaloonPos[2][1]);
+				balao.setPosition(pointsTuto[2].x, pointsTuto[2].y);
+				tutoPhaseFinal = false;
 			}
 		}
 		

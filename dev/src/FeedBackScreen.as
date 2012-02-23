@@ -1,6 +1,7 @@
 package  
 {
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
@@ -31,6 +32,7 @@ package
 		private function closeScreen(e:MouseEvent):void 
 		{
 			this.play();
+			dispatchEvent(new Event(Event.CLOSE, true));
 		}
 		
 		public function openScreen():void
