@@ -9,6 +9,8 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.ColorMatrixFilter;
+	import flash.geom.Point;
 	/**
 	 * ...
 	 * @author Alexandre
@@ -18,6 +20,16 @@ package
 		private const PAR:String = "par";
 		private const IMPAR:String = "impar";
 		private const INDEFINIDA:String = "indefinida";
+		
+		/*
+		 * Filtro de conversão para tons de cinza.
+		 */
+		private const GRAYSCALE_FILTER:ColorMatrixFilter = new ColorMatrixFilter([
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.2225, 0.7169, 0.0606, 0, 0,
+			0.0000, 0.0000, 0.0000, 1, 0
+		]);
 		
 		private var graph:SimpleGraph;
 		private var xmin:Number;
@@ -56,6 +68,8 @@ package
 			configRadioButtons();
 			addListeners();
 			sortExercise();
+			
+			iniciaTutorial();
 		}
 		
 		private function createGraph():void 
@@ -110,7 +124,7 @@ package
 			
 			
 			funcoes_pares.push(function(x:Number):Number { return 1; } );//"1", 
-			funcoes_pares.push(function(x:Number):Number { return x * x; } );//"x^2", 
+			funcoes_pares.push(function(x:Number):Number { return Math.pow(x, 2); } );//"x^2", 
 			funcoes_pares.push(function(x:Number):Number { return Math.pow(x, 4) - 3; } );//"x^4 - 3", 
 			funcoes_pares.push(function(x:Number):Number { return Math.cos(x); } );//"cos(x)", 
 			funcoes_pares.push(function(x:Number):Number { return Math.cos(x) + 2 * Math.cos(2 * x); } );//"cos(x) + 2*cos(2*x)", 
@@ -145,7 +159,7 @@ package
 		
 		private function addListeners():void 
 		{
-			//botoes.tutorialBtn.addEventListener(MouseEvent.CLICK, iniciaTutorial);
+			botoes.tutorialBtn.addEventListener(MouseEvent.CLICK, iniciaTutorial);
 			botoes.orientacoesBtn.addEventListener(MouseEvent.CLICK, openOrientacoes);
 			botoes.creditos.addEventListener(MouseEvent.CLICK, openCreditos);
 			botoes.resetButton.addEventListener(MouseEvent.CLICK, sortExercise);
@@ -156,6 +170,7 @@ package
 			rd_indefinida.addEventListener(MouseEvent.CLICK, changeSelectedAnswer);
 			
 			finaliza.addEventListener(MouseEvent.CLICK, finalizaExec);
+			btReiniciar.addEventListener(MouseEvent.CLICK, sortExercise);
 			
 			createToolTips();
 		}
@@ -164,18 +179,23 @@ package
 		{
 			var rdClicked:RadioButton = RadioButton(e.target);
 			selectedAnswer = rdClicked.label;
+			finaliza.filters = [];
+			finaliza.mouseEnabled = true;
+			finaliza.alpha = 1;
 		}
 		
 		private function openOrientacoes(e:MouseEvent):void 
 		{
 			orientacoesScreen.openScreen();
 			setChildIndex(orientacoesScreen, numChildren - 1);
+			setChildIndex(borda, numChildren - 1);
 		}
 		
 		private function openCreditos(e:MouseEvent):void 
 		{
 			creditosScreen.openScreen();
 			setChildIndex(creditosScreen, numChildren - 1);
+			setChildIndex(borda, numChildren - 1);
 		}
 		
 		private function createToolTips():void 
@@ -185,14 +205,14 @@ package
 			var resetTT:ToolTip = new ToolTip(botoes.resetButton, "Reiniciar", 12, 0.8, 100, 0.6, 0.1);
 			var intTT:ToolTip = new ToolTip(botoes.tutorialBtn, "Reiniciar tutorial", 12, 0.8, 150, 0.6, 0.1);
 			var finalizaTT:ToolTip = new ToolTip(finaliza, "Finaliza atividade", 12, 0.8, 200, 0.6, 0.1);
-			//var trocaTuboTT:ToolTip = new ToolTip(trocaTubo, "Novo tubo de ensaio", 12, 0.8, 250, 0.6, 0.1);
+			var reiniciarTT:ToolTip = new ToolTip(btReiniciar, "Reiniciar", 12, 0.8, 250, 0.6, 0.1);
 			
 			addChild(infoTT);
 			addChild(instTT);
 			addChild(resetTT);
 			addChild(intTT);
 			addChild(finalizaTT);
-			//addChild(trocaTuboTT);
+			addChild(reiniciarTT);
 		}
 		
 		private function sortExercise(e:MouseEvent = null):void 
@@ -210,6 +230,20 @@ package
 		private function resetRadioButtons():void 
 		{
 			rd_none.selected = true;
+			finaliza.filters = [GRAYSCALE_FILTER];
+			finaliza.mouseEnabled = false;
+			finaliza.alpha = 0.5;
+			finaliza.visible = true;
+			
+			rd_ambas.mouseEnabled = true;
+			rd_impar.mouseEnabled = true;
+			rd_indefinida.mouseEnabled = true;
+			rd_par.mouseEnabled = true;
+			
+			btReiniciar.visible = false;
+			botoes.resetButton.mouseEnabled = false;
+			botoes.resetButton.filters = [GRAYSCALE_FILTER];
+			botoes.resetButton.alpha = 0.5;
 			
 			selectedAnswer = "";
 		}
@@ -238,10 +272,108 @@ package
 		
 		private function finalizaExec(e:MouseEvent = null):void
 		{
-			if (currentAnswer == selectedAnswer) {
-				trace("Acertou");
+			var strFeedBack:String;
+			if (selectedAnswer == PAR) {
+				if (currentAnswer == PAR) {//Acertou
+					feedBackScreen.setCerto = true;
+					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a -f(x).";
+				}else if (currentAnswer == IMPAR) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
+				}else if (currentAnswer == INDEFINIDA) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Atente para a região x > 0, nela não é possível \"replicar\" o gráfico de f(x) sobre o eixo y de modo a obter o mesmo f(x) na região x < 0. Assim, ao colocar um objeto na posição vertical em frente ao espelho, o reflexo irá aparecer na posição horizontal. Ou seja, não existe relação de simetria entre o objeto \"f(x) em x > 0\" e seu reflexo \"f(x) em x < 0\".";
+				}
+			}else if (selectedAnswer == IMPAR) {
+				if (currentAnswer == PAR) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
+				}else if (currentAnswer == IMPAR) {//Acertou
+					feedBackScreen.setCerto = true;
+					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a f(x).";
+				}else if (currentAnswer == INDEFINIDA) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Atente para a região x > 0, nela não é possível \"replicar\" o gráfico de f(x) sobre o eixo y de modo a obter o mesmo f(x) na região x < 0. Assim, ao colocar um objeto na posição vertical em frente ao espelho, o reflexo irá aparecer na posição horizontal. Ou seja, não existe relação de simetria entre o objeto \"f(x) em x > 0\" e seu reflexo \"f(x) em x < 0\".";
+				}
+			}else if (selectedAnswer == "ambas") {
+				strFeedBack = "Nenhuma função pode ser ao mesmo tempo par e ímpar (exceto se f(x) = 0). Ou ela é par, ou ímpar, ou não tem simetria (nem par nem ímpar).";
+			}else if (selectedAnswer == INDEFINIDA) {
+				if (currentAnswer == PAR) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
+				}else if (currentAnswer == IMPAR) {
+					feedBackScreen.setCerto = false;
+					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
+				}else if (currentAnswer == INDEFINIDA) {//Acertou
+					//TO DO: surge um ssinal de "v" na cor verde e a mensagem
+					feedBackScreen.setCerto = true;
+					strFeedBack = "Esta função não tem paridade definida.";
+				}
+			}
+			
+			finaliza.filters = [GRAYSCALE_FILTER];
+			finaliza.mouseEnabled = false;
+			finaliza.alpha = 0.5;
+			finaliza.visible = false;
+			
+			btReiniciar.visible = true;
+			botoes.resetButton.mouseEnabled = true;
+			botoes.resetButton.filters = [];
+			botoes.resetButton.alpha = 1;
+			
+			rd_ambas.mouseEnabled = false;
+			rd_impar.mouseEnabled = false;
+			rd_indefinida.mouseEnabled = false;
+			rd_par.mouseEnabled = false;
+			
+			feedBackScreen.setText(strFeedBack);
+			setChildIndex(feedBackScreen, numChildren - 1);
+			setChildIndex(borda, numChildren - 1);
+		}
+		
+		
+		//Tutorial
+		private var balao:CaixaTexto;
+		private var pointsTuto:Array;
+		private var tutoBaloonPos:Array;
+		private var tutoPos:int;
+		private var tutoSequence:Array = ["Este é o gráfico de uma função aleatória.", 
+										  "Escolha a classificação da função mostrada acima.",
+										  "Clique em \"Terminei\" para verificar sua resposta."];
+										  
+		private function iniciaTutorial(e:MouseEvent = null):void 
+		{
+			tutoPos = 0;
+			if(balao == null){
+				balao = new CaixaTexto(true);
+				addChild(balao);
+				balao.visible = false;
+				
+				pointsTuto = 	[new Point(350, 410),
+								new Point(rd_par.x + 100, rd_par.y + 2 * rd_par.height),
+								new Point(finaliza.x + (finaliza.width / 2) + 5, finaliza.y)];
+								
+				tutoBaloonPos = [[CaixaTexto.TOP, CaixaTexto.CENTER],
+								[CaixaTexto.LEFT, CaixaTexto.CENTER],
+								[CaixaTexto.LEFT, CaixaTexto.LAST]];
+			}
+			balao.removeEventListener(Event.CLOSE, closeBalao);
+			
+			balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
+			balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
+			balao.addEventListener(Event.CLOSE, closeBalao);
+			balao.visible = true;
+		}
+		
+		private function closeBalao(e:Event):void 
+		{
+			tutoPos++;
+			if (tutoPos >= tutoSequence.length) {
+				balao.removeEventListener(Event.CLOSE, closeBalao);
+				balao.visible = false;
 			}else {
-				trace("Errou");
+				balao.setText(tutoSequence[tutoPos], tutoBaloonPos[tutoPos][0], tutoBaloonPos[tutoPos][1]);
+				balao.setPosition(pointsTuto[tutoPos].x, pointsTuto[tutoPos].y);
 			}
 		}
 		
