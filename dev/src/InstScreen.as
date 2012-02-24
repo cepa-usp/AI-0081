@@ -1,6 +1,7 @@
 package 
 {
 	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
@@ -13,6 +14,14 @@ package
 		
 		public function InstScreen() 
 		{
+			if (stage) init();
+			else addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+		
+		private function init(e:Event = null):void 
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, init);
+			
 			this.x = 700 / 2;
 			this.y = 600 / 2;
 			

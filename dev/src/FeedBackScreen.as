@@ -41,10 +41,12 @@ package
 			this.closeButton.addEventListener(MouseEvent.CLICK, closeScreen, false, 0, true);
 		}
 		
-		public function setText(texto:String):void
+		public function setText(texto:String, imageFrae:String = null):void
 		{
 			openScreen();
 			this.texto.text = texto;
+			/*if (imageFrae == null) imagemFeedback.visible = false;
+			else imagemFeedback.gotoAndStop(imageFrae);*/
 		}
 		
 	}

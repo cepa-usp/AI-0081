@@ -54,6 +54,9 @@
 		private var rd_indefinida:RadioButton;
 		private var rd_none:RadioButton;
 		
+		//private var orientacoesScreen:InstScreen;
+		//private var creditosScreen:AboutScreen;
+		
 		public function Main() 
 		{
 			if (stage) init();
@@ -65,6 +68,11 @@
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			
 			this.scrollRect = new Rectangle(0, 0, 700, 600);
+			
+			/*creditosScreen = new AboutScreen();
+			addChild(creditosScreen);
+			orientacoesScreen = new InstScreen();
+			addChild(orientacoesScreen);*/
 			
 			createGraph();
 			createFunctions();
