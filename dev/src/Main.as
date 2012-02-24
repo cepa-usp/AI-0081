@@ -54,8 +54,8 @@
 		private var rd_indefinida:RadioButton;
 		private var rd_none:RadioButton;
 		
-		//private var orientacoesScreen:InstScreen;
-		//private var creditosScreen:AboutScreen;
+		private var orientacoesScreen:InstScreen;
+		private var creditosScreen:AboutScreen;
 		
 		public function Main() 
 		{
@@ -69,10 +69,10 @@
 			
 			this.scrollRect = new Rectangle(0, 0, 700, 600);
 			
-			/*creditosScreen = new AboutScreen();
+			creditosScreen = new AboutScreen();
 			addChild(creditosScreen);
 			orientacoesScreen = new InstScreen();
-			addChild(orientacoesScreen);*/
+			addChild(orientacoesScreen);
 			
 			createGraph();
 			createFunctions();
@@ -111,12 +111,12 @@
 			addChild(graph);
 			graph.draw();
 			
-			var graphBorder:Sprite = new Sprite();
-			graphBorder.graphics.lineStyle(1, 0x000000);
-			graphBorder.graphics.drawRect(0, 0, xsize, ysize);
-			graphBorder.x = graph.x;
-			graphBorder.y = graph.y;
-			addChild(graphBorder);
+			//var graphBorder:Sprite = new Sprite();
+			//graphBorder.graphics.lineStyle(1, 0x000000);
+			//graphBorder.graphics.drawRect(0, 0, xsize, ysize);
+			//graphBorder.x = graph.x;
+			//graphBorder.y = graph.y;
+			//addChild(graphBorder);
 			
 			style.color = 0xFF0000;
 			style.alpha = 1;
@@ -290,12 +290,15 @@
 		private function finalizaExec(e:MouseEvent = null):void
 		{
 			var strFeedBack:String;
+			var strImageFrame:String = "";
+			
 			if (selectedAnswer == PAR) {
 				if (currentAnswer == PAR) {//Acertou
 					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a -f(x).";
 				}else if (currentAnswer == IMPAR) {
 					certoErrado2.gotoAndStop("ERRADO");
+					strImageFrame = IMPAR;
 					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
 				}else if (currentAnswer == INDEFINIDA) {
 					certoErrado2.gotoAndStop("ERRADO");
@@ -304,6 +307,7 @@
 			}else if (selectedAnswer == IMPAR) {
 				if (currentAnswer == PAR) {
 					certoErrado2.gotoAndStop("ERRADO");
+					strImageFrame = PAR;
 					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
 				}else if (currentAnswer == IMPAR) {//Acertou
 					certoErrado2.gotoAndStop("CERTO");
@@ -318,9 +322,11 @@
 			}else if (selectedAnswer == INDEFINIDA) {
 				if (currentAnswer == PAR) {
 					certoErrado2.gotoAndStop("ERRADO");
+					strImageFrame = PAR;
 					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
 				}else if (currentAnswer == IMPAR) {
 					certoErrado2.gotoAndStop("ERRADO");
+					strImageFrame = IMPAR;
 					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
 				}else if (currentAnswer == INDEFINIDA) {//Acertou
 					//TO DO: surge um ssinal de "v" na cor verde e a mensagem
@@ -346,7 +352,7 @@
 			rd_indefinida.mouseEnabled = false;
 			rd_par.mouseEnabled = false;
 			
-			feedBackScreen.setText(strFeedBack);
+			feedBackScreen.setText(strFeedBack, strImageFrame);
 			setChildIndex(feedBackScreen, numChildren - 1);
 			setChildIndex(borda, numChildren - 1);
 		}
@@ -371,7 +377,7 @@
 				addChild(balao);
 				balao.visible = false;
 				
-				pointsTuto = 	[new Point(350, 410),
+				pointsTuto = 	[new Point(420, 240),
 								new Point(rd_par.x + 100, rd_par.y + 2 * rd_par.height),
 								new Point(finaliza.x + (finaliza.width / 2) + 5, finaliza.y)];
 								
