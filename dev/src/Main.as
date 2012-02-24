@@ -404,7 +404,7 @@
 		{
 			if(tutoPhaseFinal){
 				balao.setText("Você pode começar um novo exercício clicando aqui.", tutoBaloonPos[2][0], tutoBaloonPos[2][1]);
-				balao.setPosition(pointsTuto[2].x, pointsTuto[2].y);
+				balao.setPosition(160, pointsTuto[2].y);
 				tutoPhaseFinal = false;
 			}
 		}
