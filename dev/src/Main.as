@@ -9,9 +9,13 @@
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.external.ExternalInterface;
 	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
+	import pipwerks.SCORM;
 	/**
 	 * ...
 	 * @author Alexandre
@@ -81,6 +85,10 @@
 			sortExercise();
 			
 			iniciaTutorial();
+			
+			if (ExternalInterface.available) {
+				initLMSConnection();
+			}
 		}
 		
 		private function createGraph():void 
@@ -355,6 +363,13 @@
 			feedBackScreen.setText(strFeedBack, strImageFrame);
 			setChildIndex(feedBackScreen, numChildren - 1);
 			setChildIndex(borda, numChildren - 1);
+			
+			if (ExternalInterface.available) {
+				if (!completed) {
+					completed = true;
+					commit();
+				}
+			}
 		}
 		
 		
@@ -421,6 +436,131 @@
 				balao.setPosition(160, pointsTuto[2].y);
 				tutoPhaseFinal = false;
 			}
+		}
+		
+		
+		
+		/*------------------------------------------------------------------------------------------------*/
+		//SCORM:
+		
+		private const PING_INTERVAL:Number = 5 * 60 * 1000; // 5 minutos
+		private var completed:Boolean;
+		private var scorm:SCORM;
+		private var scormExercise:int;
+		private var connected:Boolean;
+		private var score:int;
+		private var pingTimer:Timer;
+		
+		/**
+		 * @private
+		 * Inicia a conexão com o LMS.
+		 */
+		private function initLMSConnection () : void
+		{
+			completed = false;
+			connected = false;
+			scorm = new SCORM();
+			
+			pingTimer = new Timer(PING_INTERVAL);
+			pingTimer.addEventListener(TimerEvent.TIMER, pingLMS);
+			
+			connected = scorm.connect();
+			
+			if (connected) {
+				// Verifica se a AI já foi concluída.
+				var status:String = scorm.get("cmi.completion_status");	
+				//var stringScore:String = scorm.get("cmi.score.raw");
+			 
+				switch(status)
+				{
+					// Primeiro acesso à AI
+					case "not attempted":
+					case "unknown":
+					default:
+						completed = false;
+						break;
+					
+					// Continuando a AI...
+					case "incomplete":
+						completed = false;
+						break;
+					
+					// A AI já foi completada.
+					case "completed":
+						completed = true;
+						//setMessage("ATENÇÃO: esta Atividade Interativa já foi completada. Você pode refazê-la quantas vezes quiser, mas não valerá nota.");
+						break;
+				}
+				
+				//unmarshalObjects(mementoSerialized);
+				//scormExercise = 1;
+				//score = Number(stringScore.replace(",", "."));
+				
+				//var success:Boolean = scorm.set("cmi.score.min", "0");
+				//if (success) success = scorm.set("cmi.score.max", "100");
+				
+				var success:Boolean = scorm.save();
+				
+				if (success)
+				{
+					pingTimer.start();
+				}
+				else
+				{
+					//trace("Falha ao enviar dados para o LMS.");
+					connected = false;
+				}
+			}
+			else
+			{
+				trace("Esta Atividade Interativa não está conectada a um LMS: seu aproveitamento nela NÃO será salvo.");
+			}
+			
+			//reset();
+		}
+		
+		/**
+		 * @private
+		 * Salva cmi.score.raw, cmi.location e cmi.completion_status no LMS
+		 */ 
+		private function commit()
+		{
+			if (connected)
+			{
+				// Salva no LMS a nota do aluno.
+				//var success:Boolean = scorm.set("cmi.score.raw", score.toString());
+
+				// Notifica o LMS que esta atividade foi concluída.
+				var success:Boolean = scorm.set("cmi.completion_status", (completed ? "completed" : "incomplete"));
+
+				// Salva no LMS o exercício que deve ser exibido quando a AI for acessada novamente.
+				//success = scorm.set("cmi.location", scormExercise.toString());
+				
+				// Salva no LMS a string que representa a situação atual da AI para ser recuperada posteriormente.
+				//mementoSerialized = marshalObjects();
+				//success = scorm.set("cmi.suspend_data", mementoSerialized.toString());
+
+				if (success)
+				{
+					scorm.save();
+				}
+				else
+				{
+					pingTimer.stop();
+					//setMessage("Falha na conexão com o LMS.");
+					connected = false;
+				}
+			}
+		}
+		
+		/**
+		 * @private
+		 * Mantém a conexão com LMS ativa, atualizando a variável cmi.session_time
+		 */
+		private function pingLMS (event:TimerEvent)
+		{
+			//scorm.get("cmi.completion_status");
+			commit();
 		}
 		
 	}
