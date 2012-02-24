@@ -1,4 +1,4 @@
-package 
+﻿package 
 {
 	import cepa.graph.DataStyle;
 	import cepa.graph.GraphFunction;
@@ -154,10 +154,10 @@ package
 			rd_none = new RadioButton();
 			rd_none.group = rd_par.group;
 			
-			rd_par.label = "par";
-			rd_impar.label = "impar";
+			rd_par.label = PAR;
+			rd_impar.label = IMPAR;
 			rd_ambas.label = "ambas";
-			rd_indefinida.label = "indefinida";
+			rd_indefinida.label = INDEFINIDA;
 		}
 		
 		private function addListeners():void 
@@ -306,6 +306,7 @@ package
 				}
 			}else if (selectedAnswer == "ambas") {
 				strFeedBack = "Nenhuma função pode ser ao mesmo tempo par e ímpar (exceto se f(x) = 0). Ou ela é par, ou ímpar, ou não tem simetria (nem par nem ímpar).";
+				certoErrado2.gotoAndStop("ERRADO");
 			}else if (selectedAnswer == INDEFINIDA) {
 				if (currentAnswer == PAR) {
 					certoErrado2.gotoAndStop("ERRADO");
