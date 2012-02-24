@@ -307,7 +307,7 @@
 				}else if (currentAnswer == IMPAR) {
 					certoErrado2.gotoAndStop("ERRADO");
 					strImageFrame = IMPAR;
-					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
+					strFeedBack = "Note que f(-x) = -f(x), qualquer que seja x. Para entender esta expressão, observe a figura acima: se associarmos ao lápis a parte do gráfico de f na região x > 0, o reflexo dele (indicado pela flecha vermelha) corresponderia à função na região x < 0. Ou seja, é como se refletíssemos f em x > 0 em x e em y para obtermos f em x < 0. Pense um pouco a respeito.";
 				}else if (currentAnswer == INDEFINIDA) {
 					certoErrado2.gotoAndStop("ERRADO");
 					strFeedBack = "Atente para a região x > 0, nela não é possível \"replicar\" o gráfico de f(x) sobre o eixo y de modo a obter o mesmo f(x) na região x < 0. Assim, ao colocar um objeto na posição vertical em frente ao espelho, o reflexo irá aparecer na posição horizontal. Ou seja, não existe relação de simetria entre o objeto \"f(x) em x > 0\" e seu reflexo \"f(x) em x < 0\".";
@@ -316,7 +316,7 @@
 				if (currentAnswer == PAR) {
 					certoErrado2.gotoAndStop("ERRADO");
 					strImageFrame = PAR;
-					strFeedBack = "Observe que f(-x) = f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) na região x > 0 e o refletissemos no eixo y, gerando a parte de f(x) da região x < 0. Como se pode verificar na imagem.";
+					strFeedBack = "Note que f(-x) = f(x), qualquer que seja x. Para entender esta expressão, observe a figura acima: se associarmos ao lápis a parte do gráfico de f na região x > 0, o reflexo dele (indicado pela flecha vermelha) corresponderia à função na região x < 0. Ou seja, é como se refletíssemos f em x > 0 em y (mas não em x) para obtermos f em x < 0. Pense um pouco a respeito.";
 				}else if (currentAnswer == IMPAR) {//Acertou
 					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Para qualquer x escolhido, f(-x) sempre será igual a f(x).";
@@ -337,7 +337,6 @@
 					strImageFrame = IMPAR;
 					strFeedBack = "Observe que f(-x) = -f(x). Para entender essa expressão, imagine a delimitação de um espaço no gráfico de f(x) que, na região x > 0, refletisse duas vezes, uma em x e outra em y, gerando a parte f(x) da região x < 0. Ou seja, ao colocar um objeto na posição vertical em frente a um espelho, é possível visualizar seu reflexo.";
 				}else if (currentAnswer == INDEFINIDA) {//Acertou
-					//TO DO: surge um ssinal de "v" na cor verde e a mensagem
 					certoErrado2.gotoAndStop("CERTO");
 					strFeedBack = "Esta função não tem paridade definida.";
 				}
