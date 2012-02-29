@@ -366,6 +366,7 @@
 			if (ExternalInterface.available) {
 				if (!completed) {
 					completed = true;
+					score = 100;
 					commit();
 				}
 			}
@@ -468,7 +469,7 @@
 			if (connected) {
 				// Verifica se a AI já foi concluída.
 				var status:String = scorm.get("cmi.completion_status");	
-				//var stringScore:String = scorm.get("cmi.score.raw");
+				var stringScore:String = scorm.get("cmi.score.raw");
 			 
 				switch(status)
 				{
@@ -493,12 +494,12 @@
 				
 				//unmarshalObjects(mementoSerialized);
 				//scormExercise = 1;
-				//score = Number(stringScore.replace(",", "."));
+				score = Number(stringScore.replace(",", "."));
 				
-				//var success:Boolean = scorm.set("cmi.score.min", "0");
-				//if (success) success = scorm.set("cmi.score.max", "100");
+				var success:Boolean = scorm.set("cmi.score.min", "0");
+				if (success) success = scorm.set("cmi.score.max", "100");
 				
-				var success:Boolean = scorm.save();
+				success = scorm.save();
 				
 				if (success)
 				{
@@ -527,10 +528,10 @@
 			if (connected)
 			{
 				// Salva no LMS a nota do aluno.
-				//var success:Boolean = scorm.set("cmi.score.raw", score.toString());
+				var success:Boolean = scorm.set("cmi.score.raw", score.toString());
 
 				// Notifica o LMS que esta atividade foi concluída.
-				var success:Boolean = scorm.set("cmi.completion_status", (completed ? "completed" : "incomplete"));
+				success = scorm.set("cmi.completion_status", (completed ? "completed" : "incomplete"));
 
 				// Salva no LMS o exercício que deve ser exibido quando a AI for acessada novamente.
 				//success = scorm.set("cmi.location", scormExercise.toString());
