@@ -170,6 +170,11 @@
 			rd_none = new RadioButton();
 			rd_none.group = rd_par.group;
 			
+			rd_par.buttonMode = true;
+			rd_impar.buttonMode = true;
+			rd_ambas.buttonMode = true;
+			rd_indefinida.buttonMode = true;
+			
 			rd_par.label = PAR;
 			rd_impar.label = IMPAR;
 			rd_ambas.label = "ambas";
@@ -493,7 +498,7 @@
 				}
 				
 				//unmarshalObjects(mementoSerialized);
-				//scormExercise = 1;
+				scormExercise = 1;
 				score = Number(stringScore.replace(",", "."));
 				
 				var success:Boolean = scorm.set("cmi.score.min", "0");
@@ -534,7 +539,7 @@
 				success = scorm.set("cmi.completion_status", (completed ? "completed" : "incomplete"));
 
 				// Salva no LMS o exercício que deve ser exibido quando a AI for acessada novamente.
-				//success = scorm.set("cmi.location", scormExercise.toString());
+				success = scorm.set("cmi.location", scormExercise.toString());
 				
 				// Salva no LMS a string que representa a situação atual da AI para ser recuperada posteriormente.
 				//mementoSerialized = marshalObjects();
